@@ -2,6 +2,3 @@ services:
   - type: web
     name: ngpt
     buildCommand: bash start.sh
-    env:
-      - key: WWW_PORT
-        value: 8080  # Set the appropriate port for your application
