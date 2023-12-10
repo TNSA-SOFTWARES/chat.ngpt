@@ -1,0 +1,4 @@
+services:
+  - type: web
+    name: your-app-name
+    buildCommand: bash start.sh
