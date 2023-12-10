@@ -1,9 +1,9 @@
 services:
+  services:
   - type: web
     name: ngpt
-    buildCommand: bash start.sh
-    services:
-- name: web
-  buildCommand: "npm install"
-  startCommand: "npm start"
+    buildCommand: bash start.sh  
+  - name: web
+    buildCommand: "npm install"
+  s  tartCommand: "npm start"
 
