@@ -1,1 +1,1 @@
-gunicorn -b 0.0.0.0:$PORT ngpt:app
+gunicorn -b 0.0.0.0:$PORT ngpt-chat:app
