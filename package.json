@@ -1,3 +1,0 @@
-"scripts": {
-  "start": "node ngpt.js" // Replace ngpt.js with your actual entry file
-}
