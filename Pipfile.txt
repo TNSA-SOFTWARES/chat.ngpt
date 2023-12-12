@@ -1,5 +1,0 @@
-[packages]
-gunicorn = "20.1.0"
-Flask = "3.0.0"
-numpy = "1.26.2"
-s
