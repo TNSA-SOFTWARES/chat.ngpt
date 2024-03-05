@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>TNSA NGpt</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNSA NGen</title>
     <link rel="icon" type="image/x-icon" href="tnsa.png">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
     <style>
-        /* ... (previous CSS code remains unchanged) ... */
-
-        * {
+                       * {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
@@ -104,19 +105,10 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        #profile-icon {
-            width: 40px;
-            height: 40px;
+        .logo {
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            background-color: #0084FF;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .intro-message {
             margin-bottom: 20px;
         }
 
@@ -137,8 +129,9 @@
             background-color: #f0f0f0;
         }
 
-        .regenerate-button, 
-        .stop-button {
+        .regenerate-button,
+        .stop-button,
+        .clear-history-button {
             margin-left: 10px;
             cursor: pointer;
             background-color: #0084FF;
@@ -148,32 +141,82 @@
             padding: 5px 10px;
             font-size: 14px;
         }
-    </style>
-</head>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TNSA NGpt</title>
-    <link rel="icon" type="image/x-icon" href="tnsa.png">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Font Awesome CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
-    <style>
-        /* ... (previous CSS code remains unchanged) ... */
+
+        .chat-log {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Customize the scrollbar */
+        .chat-log::-webkit-scrollbar {
+            width: 2px;
+            height: 2px; /* Set the width of the scrollbar */
+        }
+
+        .chat-log::-webkit-scrollbar-thumb {
+            background-color: #4caf50; /* Set the color of the scrollbar thumb */
+            border-radius: 2px; /* Set the radius to make it circular */
+        }
+
+        .chat-log::-webkit-scrollbar-track {
+            background-color: #f0f0f0; /* Set the color of the scrollbar track */
+        }
+
+        .logo {
+            width: 100px; /* Adjust the width as needed */
+            height: auto;
+        }
+
+        /* Add a login container for the login page */
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .login-form {
+            max-width: 400px;
+            width: 90%;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .login-input {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .login-button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #0084FF;
+            color: #fff;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
+
     <img src="tnsa.png" alt="NGpt Logo" class="logo">
-    <h1>TNSA NGpt</h1>
+    <h1>TNSA NGen</h1>
     <br>
     <br>
     <br>
     <div class="chat-container">
         <div class="ngpt-container">
             <div class="message ngpt-message intro-message">
-                Hello! I am NGpt!TNSA's most powerful AI language model. Enter the Seed word or first sentence so I can complete it!😉
+                Hello! I am NGen! TNSA's most powerful AI language model. Enter the Seed word or first sentence so I can complete it!😉
             </div>
         </div>
         <div id="result"></div>
@@ -191,149 +234,145 @@
         <div id="history"></div>
         <button class="regenerate-button" onclick="clearChat()"><i class="fas fa-trash"></i> Clear Chat History</button>
     </div>
-        <h6>NGen may display inaccurate info, including about people which doesn't represent TNSA's views ,so double-check its responses</h6>
+    <h6>NGen may display inaccurate info, including about people which doesn't represent TNSA's views ,so double-check its responses</h6>
+    <h6>Version GPLBT01.03.69(E x p i r e m e n t) UI UPDATE 1.2.7</h6>
 
-    <h6>Version 01.03.69(E x p i r e m e n t)</h6>
 
-
-    <h2>New Capabilities of our new Model N-GEN-2 </h2>
-
-    <p>Text Generation: The model will be able to generate text based on a given context. You can provide a starting context, and the model will generate a sequence of characters based on that context.
-
-Question Answering (Q&A): Although not explicitly trained for question answering, you can use the model to generate text in response to a given context and question. However, this may not produce accurate or meaningful answers, as the model is primarily trained for text generation.
-
-Understanding: The model learns to understand the structure and patterns present in the training data to some extent. It captures relationships between characters and sequences of characters, allowing it to generate coherent text.
-
-No Seed System Supported: The model can generate text without the need for a specific seed or starting point. You can provide an empty context, and the model will generate text from scratch.
-
-Speed and Efficiency: The training process is optimized for speed and efficiency, making it suitable for training on large datasets with limited computational resources.</p>
-
-    <script>
-        function clearChat() {
+</body>
+</html>
+<script>
+          function clearChat() {
             localStorage.removeItem('chatHistory');
             showChatHistory(); // Update the history display
         }
+    function submitQuery() {
+        const query = $('#queryInput').val();
+        if (!query.trim()) {
+            $('#result').append("<div class='user-container'><div class='message user-message'>Please enter a valid query.😓</div></div>");
+            return;
+        }
 
-        // ... (previous JavaScript code remains unchanged) ...
-    </script>
-</body>
-</html>
-    <script>
-        function submitQuery() {
-            const query = $('#queryInput').val();
-            if (!query.trim()) {
-                $('#result').append("<div class='user-container'><div class='message user-message'>Please enter a valid query.</div></div>");
-                return;
+        $('#result').append("<div class='user-container'><div class='message user-message'>" + query + "</div></div>");
+
+        const ngptContainer = $("<div class='ngpt-container'><div class='message ngpt-message'>Loading...</div></div>");
+        $('#result').append(ngptContainer);
+
+        $.ajax({
+            type: "POST",
+            url: "/query",
+            data: {query: query},
+            dataType: "json",
+            success: function(response) {
+                if (response.success) {
+                    ngptContainer.html("<div class='message ngpt-message'>" + response.message + "</div>");
+                } else {
+                    ngptContainer.html("<div class='message ngpt-message'>" + response.message + "</div>");
+                }
+
+                // Save chat history to Local Storage
+                const historyItem = "<div class='history-item'><strong>You:</strong> " + query + "<br><strong>NGpt:</strong> " + response.message + "</div>";
+                const history = JSON.parse(localStorage.getItem('chatHistory')) || [];
+                history.push(historyItem);
+                localStorage.setItem('chatHistory', JSON.stringify(history));
+
+                // Update the history display
+                showChatHistory();
+            },
+            error: function() {
+                ngptContainer.html("<div class='message ngpt-message'>Something went wrong. Please try again later.😓</div>");
             }
+        });
 
-            $('#result').append("<div class='user-container'><div class='message user-message'>" + query + "</div></div>");
+        $('#queryInput').val(""); // Clear the input after submitting
+    }
 
-            const ngptContainer = $("<div class='ngpt-container'><div class='message ngpt-message'>Loading...</div></div>");
-            $('#result').append(ngptContainer);
+    function showChatHistory() {
+        const history = JSON.parse(localStorage.getItem('chatHistory')) || [];
+        const historyContainer = $('#history');
+        historyContainer.empty();
+        if (history.length > 0) {
+            historyContainer.append("<div class='history-item'><strong>Chat History:</strong></div>");
+            for (const item of history) {
+                historyContainer.append(item);
+            }
+        } else {
+            historyContainer.append("<div class='history-item'>No chat history available.</div>");
+        }
+    }
+
+    // Load chat history on page load
+    $(document).ready(function() {
+        showChatHistory();
+    });
+
+    function regenerateResponse() {
+        const lastQuery = $('.user-message').last().text();
+        if (lastQuery) {
+            $('#result').append("<div class='ngpt-container'><div class='message ngpt-message'>Regenerating...</div></div>");
 
             $.ajax({
                 type: "POST",
                 url: "/query",
-                data: {query: query},
+                data: {query: lastQuery},
                 dataType: "json",
                 success: function(response) {
                     if (response.success) {
-                        ngptContainer.html("<div class='message ngpt-message'>" + response.message + "</div>");
+                        const ngptContainer = $("<div class='ngpt-container'><div class='message ngpt-message'>" + response.message + "</div></div>");
+                        $('#result').append(ngptContainer);
                     } else {
-                        ngptContainer.html("<div class='message ngpt-message'>" + response.message + "</div>");
+                        $('#result').append("<div class='ngpt-container'><div class='message ngpt-message'>" + response.message + "</div></div>");
                     }
-
-                    // Save chat history to Local Storage
-                    const historyItem = "<div class='history-item'><strong>You:</strong> " + query + "<br><strong>NGpt:</strong> " + response.message + "</div>";
-                    const history = JSON.parse(localStorage.getItem('chatHistory')) || [];
-                    history.push(historyItem);
-                    localStorage.setItem('chatHistory', JSON.stringify(history));
-
-                    // Update the history display
-                    showChatHistory();
                 },
                 error: function() {
-                    ngptContainer.html("<div class='message ngpt-message'>Something went wrong. Please try again later.😓</div>");
+                    $('#result').append("<div class='ngpt-container'><div class='message ngpt-message'>Something went wrong. Please try again later.</div></div>");
                 }
             });
-
-            $('#queryInput').val(""); // Clear the input after submitting
         }
+    }
 
-        function showChatHistory() {
-            const history = JSON.parse(localStorage.getItem('chatHistory')) || [];
-            const historyContainer = $('#history');
-            historyContainer.empty();
-            if (history.length > 0) {
-                historyContainer.append("<div class='history-item'><strong>Chat History:</strong></div>");
-                for (const item of history) {
-                    historyContainer.append(item);
-                }
-            } else {
-                historyContainer.append("<div class='history-item'>No chat history available.</div>");
+    // Stop Response
+    function stopResponse() {
+        $.ajax({
+            type: "POST",
+            url: "/stop",
+            success: function(response) {
+                $('#result').append("<div class='ngpt-container'><div class='message ngpt-message'>Response generation stopped.</div></div>");
+            },
+            error: function() {
+                $('#result').append("<div class='ngpt-container'><div class='message ngpt-message'>Failed to stop response generation.</div></div>");
             }
-        }
-
-        // Load chat history on page load
-        $(document).ready(function() {
-            showChatHistory();
         });
-
-        function regenerateResponse() {
-            const lastQuery = $('.user-message').last().text();
-            if (lastQuery) {
-                $('#result').append("<div class='ngpt-container'><div class='message ngpt-message'>Regenerating...</div></div>");
-
-                $.ajax({
-                    type: "POST",
-                    url: "/query",
-                    data: {query: lastQuery},
-                    dataType: "json",
-                    success: function(response) {
-                        if (response.success) {
-                            const ngptContainer = $("<div class='ngpt-container'><div class='message ngpt-message'>" + response.message + "</div></div>");
-                            $('#result').append(ngptContainer);
-                        } else {
-                            $('#result').append("<div class='ngpt-container'><div class='message ngpt-message'>" + response.message + "</div></div>");
-                        }
-                    },
-                    error: function() {
-                        $('#result').append("<div class='ngpt-container'><div class='message ngpt-message'>Something went wrong. Please try again later.</div></div>");
-                    }
-                });
-            }
-        }
-
-        // Stop Response
-        function stopResponse() {
-            $.ajax({
-                type: "POST",
-                url: "/stop",
-                success: function(response) {
-                    $('#result').append("<div class='ngpt-container'><div class='message ngpt-message'>Response generation stopped.</div></div>");
-                },
-                error: function() {
-                    $('#result').append("<div class='ngpt-container'><div class='message ngpt-message'>Failed to stop response generation.</div></div>");
-                }
-            });
-        }
+    }
 
 
-        function developMode() {
-            const formData = new FormData();
-            formData.append('query', 'develop');
+    function developMode() {
+        const formData = new FormData();
+        formData.append('query', 'develop');
 
-            fetch('/query', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('result').innerHTML = "<p>" + data.message + "</p>";
-            })
-            .catch(() => {
-                document.getElementById('result').innerHTML = "<p>Something went wrong. Please try again later.😓</p>";
-            });
+        fetch('/query', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('result').innerHTML = "<p>" + data.message + "</p>";
+        })
+        .catch(() => {
+            document.getElementById('result').innerHTML = "<p>Something went wrong. Please try again later.😓</p>";
+        });
+    }
+
+
+        // New function for submitting login
+        function submitLogin() {
+            const email = $('#emailInput').val();
+            const password = $('#passwordInput').val();
+
+            // Add your logic for handling the login here
+
+            // Clear the input after submitting
+            $('#emailInput').val("");
+            $('#passwordInput').val("");
         }
     </script>
 </body>
