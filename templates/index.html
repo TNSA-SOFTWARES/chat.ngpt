@@ -363,17 +363,23 @@
     }
 
 
-        // New function for submitting login
-        function submitLogin() {
-            const email = $('#emailInput').val();
-            const password = $('#passwordInput').val();
+    // Function to display the update message
+        function showUpdateMessage() {
+            const updateMessage = $("<div class='update-message'>NGEN was just updated.</div>");
+            $('body').append(updateMessage);
 
-            // Add your logic for handling the login here
-
-            // Clear the input after submitting
-            $('#emailInput').val("");
-            $('#passwordInput').val("");
+            // Close the message after 5 seconds (5000 milliseconds)
+            setTimeout(function() {
+                updateMessage.fadeOut(1000, function() {
+                    $(this).remove();
+                });
+            }, 5000);
         }
+
+        // Call the function to display the update message
+        $(document).ready(function() {
+            showUpdateMessage();
+        });
     </script>
 </body>
 </html>
