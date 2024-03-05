@@ -63,15 +63,59 @@ def fill_in_the_blanks(query, model_architecture, data, temperature=1.0):
 
 # Define a function to generate text
 def generate_text(seed_text, next_words, model_architecture, temperature=1.0):
-    # Your generate_text function implementation here
-    # This function should generate text based on the provided seed text and model architecture
-    pass
+    generated_text = seed_text
+    recent_words = seed_text.split()  # Store the most recent words
+
+    for _ in range(next_words):
+        # Check if the most recent word is in the vocabulary
+        if recent_words[-1] in word_to_index:
+            # Rest of the code remains the same
+            token_list = generated_text.split()
+            token_list = token_list[-(input_dim - 1):]
+
+            token_indices = [word_to_index[word] for word in token_list]
+            token_encoding = np.zeros(input_dim)
+
+            for idx in token_indices:
+                token_encoding[idx] = 1
+
+            hidden_layer_input = np.dot(token_encoding, weights_hidden) + biases_hidden
+            hidden_layer_output = 1 / (1 + np.exp(-hidden_layer_input))
+
+            output_layer_input = np.dot(hidden_layer_output, weights_output) + biases_output
+            output_layer_output = np.exp(output_layer_input) / np.sum(np.exp(output_layer_input))
+
+            scaled_output = np.log(output_layer_output) / temperature
+            scaled_output = np.exp(scaled_output - np.max(scaled_output))
+            scaled_output = scaled_output / scaled_output.sum()
+
+            next_word_index = np.random.choice(range(output_dim), p=scaled_output)
+            next_word = index_to_word[str(next_word_index)]
+
+            if next_word not in recent_words:
+                recent_words.append(next_word)
+                if len(recent_words) > input_dim - 1:
+                    recent_words.pop(0)
+
+                generated_text += " " + next_word
+        else:
+            break
+
+    return generated_text
 
 # Define a function to answer queries
 def answer_query(query, data, model_architecture):
-    # Your answer_query function implementation here
-    # This function should provide an answer to the user query based on the provided data and model architecture
-    pass
+    # Check if the query is in the data
+    if query in data:
+        return data[data.index(query) + 1]  # Return the answer after the query
+    else:
+        # If not in data, generate a response using the model
+        generated_response = generate_text(query, next_words=500, model_architecture=model_architecture, temperature=1.7)
+        return generated_response
+
+# Define a function to remove numbers from text
+def remove_numbers(text):
+    return re.sub(r'\d+', '', text)
 
 # Accept user input and generate a response
 @app.route('/')
@@ -81,6 +125,9 @@ def index():
 @app.route('/query', methods=['POST'])
 def query():
     user_input = request.form['query']
+    
+    # Remove numbers from user input
+    user_input = remove_numbers(user_input)
     
     # Fill in the blanks in the user's query
     filled_query = fill_in_the_blanks(user_input, model_architecture, data, temperature=1.7)
@@ -94,9 +141,6 @@ def query():
         'message': response,
     }
     return jsonify(response_data)
-
-# Print message indicating the NGEN was just updated
-print("NGEN was just updated.")
 
 if __name__ == '__main__':
     app.run(debug=True)
