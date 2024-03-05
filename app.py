@@ -7,7 +7,7 @@ import re
 app = Flask(__name__)
 
 # Load the pre-trained model architecture
-model_json_file = 'text_generation_model.json'
+model_json_file = 'C:\\Users\\250228\Videos\\TNSA_NEW\\model_output\\text_generation_model.json'
 data_file = 'data.txt'
 
 if not os.path.exists(model_json_file) or not os.path.exists(data_file):
@@ -63,65 +63,15 @@ def fill_in_the_blanks(query, model_architecture, data, temperature=1.0):
 
 # Define a function to generate text
 def generate_text(seed_text, next_words, model_architecture, temperature=1.0):
-    generated_text = seed_text
-    recent_words = seed_text.split()  # Store the most recent words
-
-    for _ in range(next_words):
-        # Check if the most recent word is in the vocabulary
-        if recent_words[-1] in word_to_index:
-            # Rest of the code remains the same
-            token_list = generated_text.split()
-            token_list = token_list[-(input_dim - 1):]
-
-            token_indices = [word_to_index[word] for word in token_list]
-            token_encoding = np.zeros(input_dim)
-
-            for idx in token_indices:
-                token_encoding[idx] = 1
-
-            hidden_layer_input = np.dot(token_encoding, weights_hidden) + biases_hidden
-            hidden_layer_output = 1 / (1 + np.exp(-hidden_layer_input))
-
-            output_layer_input = np.dot(hidden_layer_output, weights_output) + biases_output
-            output_layer_output = np.exp(output_layer_input) / np.sum(np.exp(output_layer_input))
-
-            scaled_output = np.log(output_layer_output) / temperature
-            scaled_output = np.exp(scaled_output - np.max(scaled_output))
-            scaled_output = scaled_output / scaled_output.sum()
-
-            # Filter the next word based on the coherence with preceding words
-            filtered_output = scaled_output.copy()
-            for idx in range(output_dim):
-                word = index_to_word[str(idx)]
-                if word not in recent_words and not word.isdigit():  # Exclude numeric tokens
-                    filtered_output[idx] = 0
-
-            # Normalize the filtered output probabilities
-            filtered_output /= filtered_output.sum()
-
-            next_word_index = np.random.choice(range(output_dim), p=filtered_output)
-            next_word = index_to_word[str(next_word_index)]
-
-            if next_word not in recent_words and not next_word.isdigit():  # Exclude numeric tokens
-                recent_words.append(next_word)
-                if len(recent_words) > input_dim - 1:
-                    recent_words.pop(0)
-
-                generated_text += " " + next_word
-        else:
-            break
-
-    return generated_text
+    # Your generate_text function implementation here
+    # This function should generate text based on the provided seed text and model architecture
+    pass
 
 # Define a function to answer queries
 def answer_query(query, data, model_architecture):
-    # Check if the query is in the data
-    if query in data:
-        return data[data.index(query) + 1]  # Return the answer after the query
-    else:
-        # If not in data, generate a response using the model
-        generated_response = generate_text(query, next_words=500, model_architecture=model_architecture, temperature=1.7)
-        return generated_response
+    # Your answer_query function implementation here
+    # This function should provide an answer to the user query based on the provided data and model architecture
+    pass
 
 # Accept user input and generate a response
 @app.route('/')
