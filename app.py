@@ -7,7 +7,7 @@ import re
 app = Flask(__name__)
 
 # Load the pre-trained model architecture
-model_json_file = 'text_generation_model.json'
+model_architecture = 'text_generation_model.json'
 data_file = 'data.txt'
 
 if not os.path.exists(model_json_file) or not os.path.exists(data_file):
