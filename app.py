@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, request, jsonify
 import numpy as np
 import os
@@ -15,30 +14,35 @@ if not os.path.exists(model_json_file) or not os.path.exists(data_file):
     print("Model architecture file or data file not found.")
     exit()
 
-with open(model_json_file, 'r') as json_file:
-    model_architecture = json.load(json_file)
-
-input_dim = model_architecture['input_dim']
-output_dim = model_architecture['output_dim']
-word_to_index = model_architecture['word_to_index']
-index_to_word = model_architecture['index_to_word']
-
-# Read data from the file with explicit encoding specification
-with open(data_file, 'r', encoding='utf-8') as data_file:
-    data = data_file.read().splitlines()
-
-# Initialize random weights and biases if the weight files are not available
 try:
-    weights_hidden = np.loadtxt('weights_hidden.csv', delimiter=',')
-    biases_hidden = np.loadtxt('biases_hidden.csv', delimiter=',')
-    weights_output = np.loadtxt('weights_output.csv', delimiter=',')
-    biases_output = np.loadtxt('biases_output.csv', delimiter=',')
-except OSError:
-    # Initialize random weights if files are not found
-    weights_hidden = np.random.randn(input_dim, 1024)
-    biases_hidden = np.zeros(128)
-    weights_output = np.random.randn(1024, output_dim)
-    biases_output = np.zeros(output_dim)
+    with open(model_json_file, 'r') as json_file:
+        model_architecture = json.load(json_file)
+
+    input_dim = model_architecture['input_dim']
+    output_dim = model_architecture['output_dim']
+    word_to_index = model_architecture['word_to_index']
+    index_to_word = model_architecture['index_to_word']
+
+    # Read data from the file with explicit encoding specification
+    with open(data_file, 'r', encoding='utf-8') as data_file:
+        data = data_file.read().splitlines()
+
+    # Initialize random weights and biases if the weight files are not available
+    try:
+        weights_hidden = np.loadtxt('weights_hidden.csv', delimiter=',')
+        biases_hidden = np.loadtxt('biases_hidden.csv', delimiter=',')
+        weights_output = np.loadtxt('weights_output.csv', delimiter=',')
+        biases_output = np.loadtxt('biases_output.csv', delimiter=',')
+    except OSError:
+        # Initialize random weights if files are not found
+        weights_hidden = np.random.randn(input_dim, 1024)
+        biases_hidden = np.zeros(128)
+        weights_output = np.random.randn(1024, output_dim)
+        biases_output = np.zeros(output_dim)
+
+except Exception as e:
+    print("Error loading model or data:", e)
+    exit()
 
 # Define a function to fill in the blanks
 def fill_in_the_blanks(query, model_architecture, data, temperature=1.0):
@@ -55,7 +59,7 @@ def fill_in_the_blanks(query, model_architecture, data, temperature=1.0):
         if seed_text in data:
             generated_text = seed_text
         else:
-            generated_text = generate_text(seed_text, next_words=blank_size, model_architecture=model_architecture, temperature=temperature)
+            generated_text = generate_text(seed_text, blank_size, model_architecture, temperature)
 
         # Replace the blank with the generated text
         query = query[:start] + generated_text + query[end:]
@@ -64,13 +68,16 @@ def fill_in_the_blanks(query, model_architecture, data, temperature=1.0):
 
 # Define a function to generate text
 def generate_text(seed_text, next_words, model_architecture, temperature=1.0):
+    # Access word_to_index and index_to_word dictionaries from model_architecture
+    word_to_index = model_architecture['word_to_index']
+    index_to_word = model_architecture['index_to_word']
+    
     generated_text = seed_text
     recent_words = seed_text.split()  # Store the most recent words
 
     for _ in range(next_words):
         # Check if the most recent word is in the vocabulary
         if recent_words[-1] in word_to_index:
-            # Rest of the code remains the same
             token_list = generated_text.split()
             token_list = token_list[-(input_dim - 1):]
 
@@ -125,23 +132,28 @@ def index():
 
 @app.route('/query', methods=['POST'])
 def query():
-    user_input = request.form['query']
-    
-    # Remove numbers from user input
-    user_input = remove_numbers(user_input)
-    
-    # Fill in the blanks in the user's query
-    filled_query = fill_in_the_blanks(user_input, model_architecture, data, temperature=1.7)
+    try:
+        user_input = request.form['query']
+        
+        # Remove numbers from user input
+        user_input = remove_numbers(user_input)
+        
+        # Fill in the blanks in the user's query
+        filled_query = fill_in_the_blanks(user_input, model_architecture, data, temperature=1.7)
 
-    # Answer the filled query using the modified function
-    response = answer_query(filled_query, data, model_architecture)
+        # Answer the filled query using the modified function
+        response = answer_query(filled_query, data, model_architecture)
 
-    # Return the response
-    response_data = {
-        'success': True,
-        'message': response,
-    }
-    return jsonify(response_data)
+        # Return the response
+        response_data = {
+            'success': True,
+            'message': response,
+        }
+        return jsonify(response_data)
+
+    except Exception as e:
+        print("Error handling query:", e)
+        return jsonify({'success': False, 'message': 'Error handling query'})
 
 if __name__ == '__main__':
     app.run(debug=True)
