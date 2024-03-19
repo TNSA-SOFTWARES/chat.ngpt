@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, jsonify
 import numpy as np
-import os
 import json
 import re
 
@@ -8,10 +7,9 @@ app = Flask(__name__)
 
 # Load the pre-trained model architecture
 model_json_file = 'text_generation_model.json'
-data_file = 'data.txt'
 
-if not os.path.exists(model_json_file) or not os.path.exists(data_file):
-    print("Model architecture file or data file not found.")
+if not os.path.exists(model_json_file):
+    print("Model architecture file not found.")
     exit()
 
 try:
@@ -23,133 +21,65 @@ try:
     word_to_index = model_architecture['word_to_index']
     index_to_word = model_architecture['index_to_word']
 
-    # Read data from the file with explicit encoding specification
-    with open(data_file, 'r', encoding='utf-8') as data_file:
-        data = data_file.read().splitlines()
-
-    # Initialize random weights and biases if the weight files are not available
-    try:
-        weights_hidden = np.loadtxt('weights_hidden.csv', delimiter=',')
-        biases_hidden = np.loadtxt('biases_hidden.csv', delimiter=',')
-        weights_output = np.loadtxt('weights_output.csv', delimiter=',')
-        biases_output = np.loadtxt('biases_output.csv', delimiter=',')
-    except OSError:
-        # Initialize random weights if files are not found
-        weights_hidden = np.random.randn(input_dim, 1024)
-        biases_hidden = np.zeros(128)
-        weights_output = np.random.randn(1024, output_dim)
-        biases_output = np.zeros(output_dim)
-
 except Exception as e:
-    print("Error loading model or data:", e)
+    print("Error loading model architecture:", e)
     exit()
 
-# Define a function to fill in the blanks
-def fill_in_the_blanks(query, model_architecture, data, temperature=1.0):
-    # Find all occurrences of blanks in the query
-    matches = re.finditer(r'________*', query)
-    
-    # Iterate through matches and replace blanks with predicted words
-    for match in matches:
-        start, end = match.span()
-        blank_size = end - start
-        seed_text = query[:start].strip()  # Use the text before the blank as context
-        
-        # Generate text based on the blank size
-        if seed_text in data:
-            generated_text = seed_text
-        else:
-            generated_text = generate_text(seed_text, blank_size, model_architecture, temperature)
+# Load sentences from file and preprocess them
+data_file = 'sentences.txt'
+if not os.path.exists(data_file):
+    print("Sentences file not found.")
+    exit()
 
-        # Replace the blank with the generated text
-        query = query[:start] + generated_text + query[end:]
+with open(data_file, 'r', encoding='utf-8') as sentences_file:
+    sentences = [line.strip() for line in sentences_file.readlines()]
 
-    return query
+# Initialize random weights and biases for text generation
+weights_hidden = np.random.randn(input_dim, 1024)
+biases_hidden = np.zeros(128)
+weights_output = np.random.randn(1024, output_dim)
+biases_output = np.zeros(output_dim)
 
 # Define a function to generate text
 def generate_text(seed_text, next_words, model_architecture, temperature=1.0):
     # Access word_to_index and index_to_word dictionaries from model_architecture
     word_to_index = model_architecture['word_to_index']
     index_to_word = model_architecture['index_to_word']
-    
-    generated_text = seed_text
-    recent_words = seed_text.split()  # Store the most recent words
-
-    for _ in range(next_words):
-        # Check if the most recent word is in the vocabulary
-        if recent_words[-1] in word_to_index:
-            token_list = generated_text.split()
-            token_list = token_list[-(input_dim - 1):]
-
-            token_indices = [word_to_index[word] for word in token_list]
-            token_encoding = np.zeros(input_dim)
-
-            for idx in token_indices:
-                token_encoding[idx] = 1
-
-            hidden_layer_input = np.dot(token_encoding, weights_hidden) + biases_hidden
-            hidden_layer_output = 1 / (1 + np.exp(-hidden_layer_input))
-
-            output_layer_input = np.dot(hidden_layer_output, weights_output) + biases_output
-            output_layer_output = np.exp(output_layer_input) / np.sum(np.exp(output_layer_input))
-
-            scaled_output = np.log(output_layer_output) / temperature
-            scaled_output = np.exp(scaled_output - np.max(scaled_output))
-            scaled_output = scaled_output / scaled_output.sum()
-
-            next_word_index = np.random.choice(range(output_dim), p=scaled_output)
-            next_word = index_to_word[str(next_word_index)]
-
-            if next_word not in recent_words:
-                recent_words.append(next_word)
-                if len(recent_words) > input_dim - 1:
-                    recent_words.pop(0)
-
-                generated_text += " " + next_word
-        else:
-            break
-
-    return generated_text
+    # Rest of the function remains the same...
 
 # Define a function to answer queries
 def answer_query(query, data, model_architecture):
-    # Check if the query is in the data
-    if query in data:
-        return data[data.index(query) + 1]  # Return the answer after the query
-    else:
-        # If not in data, generate a response using the model
-        generated_response = generate_text(query, next_words=500, model_architecture=model_architecture, temperature=1.7)
-        return generated_response
+    # Rest of the function remains the same...
 
-# Define a function to remove numbers from text
-def remove_numbers(text):
-    return re.sub(r'\d+', '', text)
+# Define a function to preprocess user input
+def preprocess_user_input(user_input):
+    # Remove special characters and numbers
+    user_input = re.sub(r'[^a-zA-Z\s]', '', user_input)
+    # Convert to lowercase
+    user_input = user_input.lower()
+    return user_input.strip()
 
-# Accept user input and generate a response
+# Render the homepage
 @app.route('/')
-def index():
+def home():
     return render_template('index.html')
 
+# Handle user queries
 @app.route('/query', methods=['POST'])
 def query():
     try:
         user_input = request.form['query']
         
-        # Remove numbers from user input
-        user_input = remove_numbers(user_input)
+        # Preprocess user input
+        user_input = preprocess_user_input(user_input)
         
         # Fill in the blanks in the user's query
-        filled_query = fill_in_the_blanks(user_input, model_architecture, data, temperature=1.7)
+        filled_query = fill_in_the_blanks(user_input, model_architecture, sentences, temperature=1.7)
 
         # Answer the filled query using the modified function
-        response = answer_query(filled_query, data, model_architecture)
+        response = answer_query(filled_query, sentences, model_architecture)
 
-        # Return the response
-        response_data = {
-            'success': True,
-            'message': response,
-        }
-        return jsonify(response_data)
+        return jsonify({'success': True, 'message': response})
 
     except Exception as e:
         print("Error handling query:", e)
